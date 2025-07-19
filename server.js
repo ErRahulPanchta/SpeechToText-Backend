@@ -6,6 +6,7 @@ import userRouter from "./routes/user.routes.js";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import helmet from "helmet";
+import audioRouter from "./routes/audio.routes.js";
 
 const app = express();
 app.use(cors({
@@ -26,6 +27,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/user", userRouter);
+app.use("/audio", audioRouter);
 
 const PORT = process.env.PORT;
 

@@ -2,7 +2,7 @@ import userModel from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import generateAccessToken from "../utils/generateAccessToken.js";
 import generateRefreshToken from "../utils/generateRefreshToken.js";
-import uploadImageCloudinary from "../utils/uploadImageCloudinary.js"
+import { uploadImageCloudinary } from "../utils/uploadCloudinary.js"
 
 //register controller
 export async function userRegisterController(req, res) {
@@ -114,7 +114,7 @@ export async function userLoginController(req, res) {
 //logout controller
 export async function userLogoutController(req, res) {
     try {
-        const userid=req.userId;
+        const userid = req.userId;
 
         const cookieOption = {
             httpOnly: true,
@@ -124,8 +124,8 @@ export async function userLogoutController(req, res) {
         res.clearCookie('accessToken', cookieOption);
         res.clearCookie('refreshToken', cookieOption);
 
-        await userModel.findByIdAndUpdate(userid,{
-            refresh_token:""
+        await userModel.findByIdAndUpdate(userid, {
+            refresh_token: ""
         });
         return res.json({
             message: "logout successfully",
@@ -142,27 +142,34 @@ export async function userLogoutController(req, res) {
 }
 
 //user profile picture upload controller
-export async function userProfileController(req,res){
+export async function userProfileController(req, res) {
     try {
-        const userId=req.userId //auth middleware
-        const image = req.file; //multer middlware
-
+        const userId = req.userId;
+        const image = req.file;
+        if(!image){
+            return res.status(401).json({
+                message:"provide image",
+                error:true,
+                success:false
+            })
+        }
 
         const upload = await uploadImageCloudinary(image)
-        await userModel.findByIdAndUpdate(userId,{
-            profile_picture:upload.url
-        })
+        await userModel.findByIdAndUpdate(userId, {
+            profile_picture: upload.secure_url
+        });
         return res.json({
-            message:"upload profile successfullu",
-            error:false,
-            success:true
-        })
-        
+            message: "profile picture uploaded  successfully!",
+            error: false,
+            success: true
+        });
+
     } catch (error) {
         return res.status(500).json({
-            message:error.message || error,
-            error:true,
-            success:false
-        })
+            message: error.message || error,
+            error: true,
+            success: false
+        });
     }
 }
+
