@@ -1,0 +1,69 @@
+# .gitignore for Node.js backend
+
+# Environment variables
+.env
+.env.local
+.env.development
+.env.test
+
+# Dependency directories
+node_modules/
+bun.lockb
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Runtime data
+*.pid
+*.seed
+*.pid.lock
+
+# Diagnostic reports
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Build files
+dist/
+build/
+.out/
+.next/
+
+# Cache directories
+.cache/
+.temp/
+.tmp/
+
+# Editor directories and files
+.idea/
+.vscode/
+*.swp
+*.swo
+*.sublime-workspace
+*.code-workspace
+
+# System Files
+.DS_Store
+Thumbs.db
+
+# Testing
+coverage/
+.nyc_output/
+
+# Package manager specific
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Optional (for Render deployments)
+.render/
+
+# MongoDB related (if any local DBs)
+data/
+mongod.log
+
+# Optional (if using TypeScript)
+*.tsbuildinfo
