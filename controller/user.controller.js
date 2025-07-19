@@ -2,7 +2,7 @@ import userModel from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import generateAccessToken from "../utils/generateAccessToken.js";
 import generateRefreshToken from "../utils/generateRefreshToken.js";
-
+import uploadImageCloudinary from "../utils/uploadImageCloudinary.js"
 
 //register controller
 export async function userRegisterController(req, res) {
@@ -141,3 +141,28 @@ export async function userLogoutController(req, res) {
     }
 }
 
+//user profile picture upload controller
+export async function userProfileController(req,res){
+    try {
+        const userId=req.userId //auth middleware
+        const image = req.file; //multer middlware
+
+
+        const upload = await uploadImageCloudinary(image)
+        await userModel.findByIdAndUpdate(userId,{
+            profile_picture:upload.url
+        })
+        return res.json({
+            message:"upload profile successfullu",
+            error:false,
+            success:true
+        })
+        
+    } catch (error) {
+        return res.status(500).json({
+            message:error.message || error,
+            error:true,
+            success:false
+        })
+    }
+}
