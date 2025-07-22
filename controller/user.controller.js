@@ -71,7 +71,7 @@ export async function userLoginController(req, res) {
             })
         }
 
-        const matchPassword = bcrypt.compare(password, existingUser.password);
+        const matchPassword = await bcrypt.compare(password, existingUser.password);
         if (!matchPassword) {
             return res.status(400).json({
                 message: "incorrect password",
@@ -146,11 +146,11 @@ export async function userProfileController(req, res) {
     try {
         const userId = req.userId;
         const image = req.file;
-        if(!image){
+        if (!image) {
             return res.status(401).json({
-                message:"provide image",
-                error:true,
-                success:false
+                message: "provide image",
+                error: true,
+                success: false
             })
         }
 
