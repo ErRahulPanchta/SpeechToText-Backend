@@ -2,10 +2,19 @@ import { AssemblyAI } from "assemblyai";
 import audioModel from "../models/audio.model.js";
 import { uploadAudioCloudinary } from "../utils/uploadCloudinary.js";
 
+//upload audio to api controller
 export async function uploadAudioController(req, res) {
     try {
         const audio = req.file;
         const userId = req.userId;
+
+        if (!audio) {
+            return res.status(400).json({
+                message: "Please Provide Audio File",
+                error: true,
+                success: false
+            })
+        }
 
         const upload = await uploadAudioCloudinary(audio);
 
@@ -19,7 +28,13 @@ export async function uploadAudioController(req, res) {
         };
 
         const transcript = await client.transcripts.transcribe(params);
-
+        if (!transcript) {
+            return res.status(500).json({
+                message: error.message || error,
+                error: true,
+                success: false
+            })
+        }
 
         const newAudio = new audioModel({
             audio_file: upload.secure_url,
@@ -32,7 +47,8 @@ export async function uploadAudioController(req, res) {
         return res.json({
             message: "audio uploaded Successfully!",
             error: false,
-            success: true
+            success: true,
+            data: newAudio
         });
 
     } catch (error) {
@@ -43,3 +59,45 @@ export async function uploadAudioController(req, res) {
         });
     }
 }
+
+//get transcript of audio
+export async function getTranscriptController(req, res) {
+
+    try {
+
+        const audioId = req.params;
+
+        if (!audioId) {
+            return res.status(400).json({
+                message: "please provide audio",
+                error: true,
+                success: false
+            });
+        }
+
+        const audio = await audioModel.findById(audioId);
+
+        if (!audio) {
+            return res.status(400).json({
+                message: "audio not found",
+                error: true,
+                success: false
+            });
+        }
+        const transcript = audio.transcript;
+        return res.json({
+            message: "Transciption of audio",
+            error: false,
+            success: true,
+            transcript: transcript
+        })
+
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message || error,
+            error: true,
+            success: false
+        })
+    }
+
+} 
