@@ -48,7 +48,10 @@ export async function uploadAudioController(req, res) {
             message: "audio uploaded Successfully!",
             error: false,
             success: true,
-            data: newAudio
+            data: {
+                audio: newAudio,
+                _id: newAudio._id
+            }
         });
 
     } catch (error) {
@@ -60,12 +63,13 @@ export async function uploadAudioController(req, res) {
     }
 }
 
-//get transcript of audio
-export async function getTranscriptController(req, res) {
+
+//get audio details
+export async function getAudioDetails(req, res) {
 
     try {
 
-        const audioId = req.params;
+        const { id: audioId } = req.params;
 
         if (!audioId) {
             return res.status(400).json({
@@ -84,12 +88,12 @@ export async function getTranscriptController(req, res) {
                 success: false
             });
         }
-        const transcript = audio.transcript;
+
         return res.json({
-            message: "Transciption of audio",
+            message: "deatils of audio",
             error: false,
             success: true,
-            transcript: transcript
+            data: audio
         })
 
     } catch (error) {
