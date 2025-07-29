@@ -108,44 +108,38 @@ export async function getAudioDetails(req, res) {
 
 //get audio history
 export async function audioHistoryController(req, res) {
-    try {
-        const userId = req.userId;
-        if (!userId) {
-            return res.status(400).json({
-                message: "unauthorized access",
-                error: true,
-                success: false
-            })
-        }
-        const audioHistory = await audioModel
-            .find({ user: userId })
-            .sort({ createdAt: -1 })
-            .select("audio_file transcript createdAt");
+  try {
+    const userId = req.userId;
 
-        if (audioHistory.length === 0) {
-            return res.status(400).json({
-                message: "no history found",
-                error: true,
-                success: false
-            })
-        }
-
-        return res.json({
-            message: "Hisory Found",
-            error: false,
-            success: false,
-            history: audioHistory
-        })
-
-
-    } catch (error) {
-        return res.status(500).json({
-            message: error.message || error,
-            error: true,
-            success: false
-        })
+    if (!userId) {
+      return res.status(401).json({
+        message: "unauthorized access",
+        error: true,
+        success: false
+      });
     }
+
+    const audioHistory = await audioModel
+      .find({ user: userId })
+      .sort({ createdAt: -1 })
+      .select("audio_file transcript createdAt");
+
+    return res.json({
+      message: audioHistory.length ? "History found" : "No history yet",
+      error: false,
+      success: true,
+      history: audioHistory
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || "Internal server error",
+      error: true,
+      success: false
+    });
+  }
 }
+
 
 //delete audio history
 
