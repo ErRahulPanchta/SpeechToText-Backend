@@ -2,11 +2,16 @@ import jwt from "jsonwebtoken";
 
 const auth = async (req, res, next) => {
     try {
-        const token = req.cookies.accessToken || req?.headers?.authorization?.split(" ")[1];
+        const bearerHeader = req.headers?.authorization;
+        const tokenFromHeader = bearerHeader?.startsWith("Bearer ")
+            ? bearerHeader.split(" ")[1]
+            : null;
+
+        const token = req.cookies?.accessToken || tokenFromHeader;
 
         if (!token) {
             return res.status(401).json({
-                message: "provide token"
+                message: "provide token",
             });
         }
 
@@ -16,18 +21,17 @@ const auth = async (req, res, next) => {
             return res.status(401).json({
                 message: "unauthorized access",
                 error: true,
-                success: false
+                success: false,
             });
         }
 
         req.userId = decode.id;
         next();
-
     } catch (error) {
         return res.status(500).json({
             message: error.message || "Internal server error",
             error: true,
-            success: false
+            success: false,
         });
     }
 };

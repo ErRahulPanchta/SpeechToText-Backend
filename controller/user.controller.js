@@ -232,7 +232,7 @@ export async function userDetails(req,res){
     try {
         const userId  = req.userId
 
-        console.log(userId)
+        
 
         const user = await userModel.findById(userId).select('-password -refresh_token')
 
